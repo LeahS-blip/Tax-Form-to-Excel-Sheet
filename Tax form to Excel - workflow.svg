@@ -1,0 +1,60 @@
+<svg viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tax form to Excel workflow</title>
+  <desc>Six-step workflow: collect PDFs, ask Claude, auto-detect form, read on-device for standard forms or via the LLM engine for K-1/scanned/unknown forms, build the Excel, then review flagged cells.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+    <style>
+      .step  { fill: #f4f4f5; stroke: #d4d4d8; stroke-width: 1.5; }
+      .num   { fill: #6b7280; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+      .title { fill: #1f2937; font-size: 15px; font-weight: 650; }
+      .sub   { fill: #6b7280; font-size: 12.5px; }
+      .conn  { stroke: #6b7280; stroke-width: 1.6; fill: none; }
+      .laneL { fill: rgba(22,163,74,.10); stroke: #16a34a; stroke-width: 1.5; }
+      .laneR { fill: rgba(37,99,235,.10); stroke: #2563eb; stroke-width: 1.5; }
+      .llabel{ font-size: 14px; font-weight: 650; }
+      .legend{ fill: #6b7280; font-size: 12px; }
+    </style>
+  </defs>
+  <rect class="step" x="210" y="20" width="300" height="56" rx="10"/>
+  <text class="num"   x="230" y="42">1 · COLLECT</text>
+  <text class="title" x="230" y="62">Save client PDFs to one folder</text>
+  <line class="conn" x1="360" y1="76" x2="360" y2="98" marker-end="url(#arrow)"/>
+  <rect class="step" x="210" y="100" width="300" height="56" rx="10"/>
+  <text class="num"   x="230" y="122">2 · ASK</text>
+  <text class="title" x="230" y="142">“Extract these to a spreadsheet”</text>
+  <line class="conn" x1="360" y1="156" x2="360" y2="178" marker-end="url(#arrow)"/>
+  <rect class="step" x="210" y="180" width="300" height="56" rx="10"/>
+  <text class="num"   x="230" y="202">3 · AUTO-DETECT</text>
+  <text class="title" x="230" y="222">Claude identifies the form itself</text>
+  <path class="conn" d="M360,236 L360,256 L195,256 L195,278" marker-end="url(#arrow)"/>
+  <path class="conn" d="M360,236 L360,256 L525,256 L525,278" marker-end="url(#arrow)"/>
+  <rect class="laneL" x="60" y="280" width="270" height="72" rx="10"/>
+  <text class="llabel" x="78" y="308" fill="#16a34a">Standard form</text>
+  <text class="sub"    x="78" y="330">W-2, 1040, 1099s, Sch C/E</text>
+  <text class="sub"    x="78" y="346">Read on-device · private</text>
+  <rect class="laneR" x="390" y="280" width="270" height="72" rx="10"/>
+  <text class="llabel" x="408" y="308" fill="#2563eb">K-1 / scan / unknown</text>
+  <text class="sub"    x="408" y="330">Harder layouts</text>
+  <text class="sub"    x="408" y="346">LLM engine · needs API key</text>
+  <path class="conn" d="M195,352 L195,378 L360,378 L360,400" marker-end="url(#arrow)"/>
+  <path class="conn" d="M525,352 L525,378 L360,378" />
+  <rect class="step" x="210" y="402" width="300" height="56" rx="10"/>
+  <text class="num"   x="230" y="424">4 · BUILD</text>
+  <text class="title" x="230" y="444">Excel: Summary + a tab per form</text>
+  <line class="conn" x1="360" y1="458" x2="360" y2="480" marker-end="url(#arrow)"/>
+  <rect class="step" x="210" y="482" width="300" height="56" rx="10"/>
+  <text class="num"   x="230" y="504">5 · REVIEW</text>
+  <text class="title" x="230" y="524">Check flagged cells before relying</text>
+  <line class="conn" x1="360" y1="538" x2="360" y2="560" marker-end="url(#arrow)"/>
+  <rect class="step" x="210" y="562" width="300" height="56" rx="10" stroke-width="2"/>
+  <text class="num"   x="230" y="584">6 · DONE</text>
+  <text class="title" x="230" y="604">Verified spreadsheet ready</text>
+  <rect x="210" y="650" width="13" height="13" rx="3" fill="rgba(22,163,74,.15)" stroke="#16a34a"/>
+  <text class="legend" x="230" y="661">On-device (private)</text>
+  <rect x="360" y="650" width="13" height="13" rx="3" fill="rgba(37,99,235,.15)" stroke="#2563eb"/>
+  <text class="legend" x="380" y="661">LLM (text sent to API)</text>
+  <text class="legend" x="210" y="686" font-weight="700">Flags in step 5:</text>
+  <text class="legend" x="300" y="686">amber = verify · red = missing</text>
+</svg>

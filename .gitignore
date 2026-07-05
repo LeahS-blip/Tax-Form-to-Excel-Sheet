@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------
+# CLIENT DATA — never commit. These hold real tax forms (SSNs, wages, etc.)
+# ---------------------------------------------------------------------------
+Drop tax forms here/
+Extracted workbooks/
+*_extracted.xlsx
+tax_extract_*.xlsx
+
+# Example / demo spreadsheets and scratch output (exclude to be safe)
+demo_*.xlsx
+Smith_Neal_2025_Tax_Verification Example.xlsx
+_template_structure.txt
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Archives
+*.zip
+
+# User-specific / local setup files (may hold paths or keys)
+claude_desktop_config*.json
+
+# Retired, renamed-away helper files
+README - Connect tax-extractor to Claude.md
+SETUP - tax-extractor MCP server.md
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

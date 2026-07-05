@@ -1,0 +1,18 @@
+# Core (required) — fully local extraction + Excel output
+pdfplumber>=0.11
+openpyxl>=3.1
+
+# Testing helper (generates synthetic sample PDFs)
+reportlab>=4.0
+
+# Optional: scanned-PDF OCR fallback
+#   also needs system packages: tesseract-ocr, poppler-utils
+# pytesseract>=0.3
+# pdf2image>=1.17
+
+# Optional: LLM extraction engine (robust to layout/year changes)
+#   set ANTHROPIC_API_KEY to use
+# anthropic>=0.40
+
+# Optional: MCP server wrapper
+# mcp[cli]>=1.2
