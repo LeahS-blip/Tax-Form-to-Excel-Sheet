@@ -144,8 +144,10 @@ def process_path(path: str, **kw) -> list[FileResult]:
         pdfs = sorted(glob.glob(os.path.join(path, "*.pdf")))
     elif any(ch in path for ch in "*?["):
         pdfs = sorted(glob.glob(path))
-    else:
+    elif os.path.isfile(path):
         pdfs = [path]
+    else:
+        pdfs = []
     if not pdfs:
         raise FileNotFoundError(f"No PDF files found at {path}")
     results: list[FileResult] = []

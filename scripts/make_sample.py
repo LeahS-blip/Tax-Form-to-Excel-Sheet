@@ -2,12 +2,20 @@
 """
 Generate synthetic W-2 and 1040 PDFs with FAKE data for testing.
 No real personal information. Used to validate the extraction pipeline.
+
+Writes to ../assets/ by default:
+    python make_sample.py
 """
+import os
+
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 
-def make_w2(path="sample_w2.pdf"):
+ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
+
+
+def make_w2(path=os.path.join(ASSETS, "sample_w2.pdf")):
     c = canvas.Canvas(path, pagesize=letter)
     c.setFont("Helvetica-Bold", 13)
     c.drawString(72, 720, "Form W-2  Wage and Tax Statement  2024")
@@ -48,7 +56,7 @@ def make_w2(path="sample_w2.pdf"):
     return path
 
 
-def make_1040(path="sample_1040.pdf"):
+def make_1040(path=os.path.join(ASSETS, "sample_1040.pdf")):
     c = canvas.Canvas(path, pagesize=letter)
     c.setFont("Helvetica-Bold", 13)
     c.drawString(72, 730, "Form 1040  U.S. Individual Income Tax Return  2024")
@@ -80,5 +88,6 @@ def make_1040(path="sample_1040.pdf"):
 
 
 if __name__ == "__main__":
-    print("wrote", make_w2())
-    print("wrote", make_1040())
+    os.makedirs(ASSETS, exist_ok=True)
+    print("wrote", os.path.normpath(make_w2()))
+    print("wrote", os.path.normpath(make_1040()))

@@ -1,20 +1,21 @@
 """
 Positional field parser — layout-aware.
 
-These two forms are laid out differently, and that difference is the whole
-ballgame for positional parsing:
+IRS forms come in two layouts, and that difference is the whole ballgame for
+positional parsing:
 
-  * W-2  is a GRID: each value sits directly BELOW its box label, left-aligned
-    to the box. A naive "nearest token" grabs the neighbouring box's number.
-  * 1040 is ROWS: each value sits to the RIGHT of its label, right-aligned at
-    the far edge of the line. A naive "nearest token" grabs the next row down.
+  * GRID (W-2, 1099s): each value sits directly BELOW its box label,
+    left-aligned to the box. A naive "nearest token" grabs the neighbouring
+    box's number.
+  * ROW (1040, Schedules C/E, K-1 Part III): each value sits to the RIGHT of
+    its label on the same line. A naive "nearest token" grabs the next row down.
 
 So we select values per the schema's declared layout instead of one universal
 distance rule. Money tokens are scored by *richness* (a comma/decimal/$ marks a
 real amount, distinguishing "84,500.00" from a bare box number like "2").
 
 This is correct on the canonical IRS layouts. Real-world vendor variants (ADP,
-Paychek, state e-file renders) differ enough that the LLM engine is the right
+Paychex, state e-file renders) differ enough that the LLM engine is the right
 tool there; everything here is flagged with a confidence so a human can verify.
 """
 

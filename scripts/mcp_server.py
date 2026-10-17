@@ -1,38 +1,33 @@
 #!/usr/bin/env python3
 """
-MCP server wrapper for tax_extractor.
+MCP server for tax_extractor ("tax-form-to-excel").
 
-Exposes the extractor as tools so you can, inside an MCP client (e.g. Claude
-Desktop), say "extract this W-2 to a spreadsheet" and point at a PDF.
+Exposes the extractor as tools so that, inside an MCP client (e.g. Claude
+Desktop), you can say "extract this W-2 to a spreadsheet" and point at a PDF.
 
 Tools:
-  - extract_tax_form(path, engine, form_type): returns the parsed fields as JSON
-  - extract_to_excel(input_path, output_path, engine): writes an .xlsx and
-    returns the path
-  - list_supported_forms(): what the server can parse
+  - list_supported_forms(): the forms and fields the server can parse
+  - extract_tax_form(path, engine, form_type): returns parsed fields as JSON
+  - extract_to_excel(input_path, output_path, engine, form_type): writes .xlsx
 
 Run:
-  pip install "mcp[cli]"
+  pip install pdfplumber openpyxl "mcp[cli]"
   python mcp_server.py            # stdio transport
 
-Claude Desktop config (claude_desktop_config.json):
-  {
-    "mcpServers": {
-      "tax-form-to-excel": {
-        "command": "python",
-        "args": ["/absolute/path/to/tax_extractor/mcp_server.py"]
-      }
-    }
-  }
+Claude Desktop setup: see references/claude-desktop-setup.md.
 
-PRIVACY NOTE: with engine="positional" (the default) everything runs locally.
-engine="llm" sends document text to the Anthropic API; only use it if that's
-acceptable for the PII in these forms.
+PRIVACY: with engine="positional" everything runs locally. engine="auto" (the
+default) stays local unless ANTHROPIC_API_KEY is set AND local extraction comes
+up short. engine="llm" always sends document text to the Anthropic API.
 """
 
 from __future__ import annotations
 import json
 import os
+import sys
+
+# Make the bundled package importable no matter what the working directory is.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from mcp.server.fastmcp import FastMCP
@@ -61,13 +56,15 @@ def _fields_to_dict(fr):
     }
 
 
+def _missing(path: str) -> bool:
+    return not os.path.exists(path) and not any(c in path for c in "*?[")
+
+
 @mcp.tool()
 def list_supported_forms() -> str:
     """List the tax forms this server can parse and the fields it extracts."""
-    out = {}
-    for name, schema in SCHEMAS.items():
-        out[name] = [f.label for f in schema.fields]
-    return json.dumps(out, indent=2)
+    return json.dumps({name: [f.label for f in schema.fields]
+                       for name, schema in SCHEMAS.items()}, indent=2)
 
 
 @mcp.tool()
@@ -79,9 +76,11 @@ def extract_tax_form(path: str, engine: str = "auto",
         path: path to a .pdf, a directory of PDFs, or a glob pattern.
         engine: "auto" (local first, LLM fallback if available),
                 "positional" (local only), or "llm" (Anthropic API).
-        form_type: optionally force "W-2" or "1040" instead of auto-detecting.
+        form_type: optionally force a form name from list_supported_forms
+                   (e.g. "W-2", "1099-NEC", "Schedule K-1") instead of
+                   auto-detecting.
     """
-    if not os.path.exists(path) and not any(c in path for c in "*?["):
+    if _missing(path):
         return json.dumps({"error": f"path not found: {path}"})
     try:
         results = process_path(path, engine=engine, form_type=form_type)
@@ -98,25 +97,31 @@ def extract_to_excel(input_path: str, output_path: str,
 
     Args:
         input_path: a .pdf, a directory of PDFs, or a glob pattern.
-        output_path: where to write the .xlsx file.
+        output_path: where to write the .xlsx file (folders are created).
         engine: "auto", "positional", or "llm".
-        form_type: optionally force "W-2" or "1040".
+        form_type: optionally force a form name from list_supported_forms
+                   (e.g. "W-2", "1099-NEC", "Schedule K-1") instead of
+                   auto-detecting.
 
-    Returns a short JSON summary including the output path and per-file
+    Returns a short JSON summary including the output path and per-form
     field coverage so the result can be sanity-checked.
     """
+    if _missing(input_path):
+        return json.dumps({"error": f"path not found: {input_path}"})
     try:
         results = process_path(input_path, engine=engine, form_type=form_type)
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
         write_workbook(results, output_path)
     except Exception as e:
         return json.dumps({"error": str(e)})
     summary = [{
-        "filename": r.filename, "form_type": r.form_type,
+        "filename": r.filename, "form_type": r.form_type, "engine": r.engine,
         "fields_found": sum(1 for f in r.fields.values()
                             if f.value not in (None, "")),
         "fields_total": len(r.fields),
     } for r in results]
-    return json.dumps({"output": output_path, "files": summary}, indent=2)
+    return json.dumps({"output": os.path.abspath(output_path),
+                       "forms": summary}, indent=2)
 
 
 if __name__ == "__main__":

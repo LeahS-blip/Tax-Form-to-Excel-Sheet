@@ -402,7 +402,8 @@ SCHEMAS: dict[str, FormSchema] = {
 
 
 def detect_form_type(text: str) -> str | None:
-    """Return 'W-2' or '1040' based on phrases in the document text."""
+    """Return the best-matching SCHEMAS key for the text, or None if no
+    form's detect phrases appear."""
     low = text.lower()
     # Score each schema by how many of its detect phrases appear.
     best, best_score = None, 0

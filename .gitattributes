@@ -1,0 +1,6 @@
+# Normalize text; keep Windows scripts CRLF; never touch binaries
+* text=auto
+*.bat text eol=crlf
+*.pdf binary
+*.xlsx binary
+*.png binary

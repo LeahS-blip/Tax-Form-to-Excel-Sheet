@@ -2,14 +2,18 @@
 setlocal
 REM ============================================================
 REM  Drag one or more tax PDFs onto this icon to extract them
-REM  to Excel. Each PDF becomes a workbook in "Extracted workbooks".
-REM  A combined packet (1040 + schedules + K-1s in one PDF) is
-REM  split into one tab per form automatically.
+REM  to Excel. Each PDF becomes a workbook in "Extracted workbooks"
+REM  (next to this project folder). A combined packet (1040 +
+REM  schedules + K-1s in one PDF) is split into one tab per form.
 REM ============================================================
 
-set "PY=C:\Python314\python.exe"
-set "CLI=C:\Users\leahs\OneDrive\Documents\PDF to Excel\tax_extractor\tax_extractor\cli.py"
-set "OUTDIR=C:\Users\leahs\OneDrive\Documents\PDF to Excel\Extracted workbooks"
+REM Paths are relative to this file, so the folder can live anywhere.
+set "ROOT=%~dp0.."
+set "CLI=%ROOT%\scripts\cli.py"
+set "OUTDIR=%ROOT%\Extracted workbooks"
+
+REM Use python on PATH; set PY to a full path if you have several Pythons.
+set "PY=python"
 
 if "%~1"=="" (
   echo.
@@ -20,9 +24,10 @@ if "%~1"=="" (
   exit /b 0
 )
 
-if not exist "%PY%" (
-  echo [ERROR] Python not found at "%PY%".
-  echo Edit this file and set PY to your python.exe path.
+"%PY%" --version >nul 2>&1
+if errorlevel 1 (
+  echo [ERROR] Python was not found. Run "Install dependencies.bat" first,
+  echo or edit this file and set PY to the full path of python.exe.
   pause
   exit /b 1
 )

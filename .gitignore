@@ -4,27 +4,24 @@
 Drop tax forms here/
 Extracted workbooks/
 *_extracted.xlsx
-tax_extract_*.xlsx
+tax_extract*.xlsx
 
 # Example / demo spreadsheets and scratch output (exclude to be safe)
 demo_*.xlsx
-Smith_Neal_2025_Tax_Verification Example.xlsx
-_template_structure.txt
+*_Tax_Verification*.xlsx
+*_structure.txt
 
 # Python build artifacts
 __pycache__/
 *.pyc
 *.pyo
 
-# Archives
+# Archives (including the packaged skill zip)
 *.zip
 
 # User-specific / local setup files (may hold paths or keys)
 claude_desktop_config*.json
-
-# Retired, renamed-away helper files
-README - Connect tax-extractor to Claude.md
-SETUP - tax-extractor MCP server.md
+.env
 
 # OS / editor cruft
 .DS_Store

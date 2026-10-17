@@ -11,7 +11,7 @@ Strategy:
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pdfplumber
 
@@ -40,13 +40,13 @@ class ExtractedDoc:
     words: list[Word]    # all positioned words across pages
     source: str          # "native" or "ocr"
     n_pages: int
-    page_texts: list[str] = None  # text per page, for splitting combined PDFs
+    page_texts: list[str] = field(default_factory=list)  # per page, for splitting packets
 
 
 _MIN_CHARS_PER_PAGE = 40  # below this, assume the page is scanned/empty
 
 
-def _native(path: str) -> tuple[str, list[Word], int, int]:
+def _native(path: str) -> tuple[list[str], list[Word], int, int]:
     texts: list[str] = []
     words: list[Word] = []
     char_total = 0
@@ -64,7 +64,7 @@ def _native(path: str) -> tuple[str, list[Word], int, int]:
     return texts, words, n_pages, char_total
 
 
-def _ocr(path: str) -> tuple[str, list[Word], int]:
+def _ocr(path: str) -> tuple[list[str], list[Word], int]:
     """OCR fallback. Requires pytesseract, pdf2image, and the poppler + tesseract
     system binaries. Raises a clear error if they're missing."""
     try:
